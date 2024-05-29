@@ -1,0 +1,102 @@
+import pandas as pd
+
+# Load the dataset
+train_data = pd.read_csv('train.csv')
+test_data = pd.read_csv('test.csv')
+
+# Display the first few rows of the dataset
+print(train_data.head())
+import seaborn as sns
+import matplotlib.pyplot as plt
+
+# Check for missing values
+print(train_data.isnull().sum())
+
+# Visualize missing data
+sns.heatmap(train_data.isnull(), cbar=False, cmap='viridis')
+plt.show()
+
+# Fill missing values
+train_data['Age'].fillna(train_data['Age'].median(), inplace=True)
+train_data['Embarked'].fillna(train_data['Embarked'].mode()[0], inplace=True)
+train_data.drop(columns=['Cabin'], inplace=True)
+
+# Drop the PassengerId column from train data
+train_data.drop(columns=['PassengerId'], inplace=True)
+
+# For the test data, we'll fill the missing values similarly
+test_data['Age'].fillna(test_data['Age'].median(), inplace=True)
+test_data['Fare'].fillna(test_data['Fare'].median(), inplace=True)
+test_data.drop(columns=['Cabin'], inplace=True)
+
+# Convert categorical variables into numeric
+train_data = pd.get_dummies(train_data, columns=['Sex', 'Embarked'])
+test_data = pd.get_dummies(test_data, columns=['Sex', 'Embarked'])
+
+# Ensure both datasets have the same dummy variable columns
+missing_cols = set(train_data.columns) - set(test_data.columns)
+for c in missing_cols:
+    test_data[c] = 0
+test_data = test_data[train_data.columns.drop('Survived')]
+import seaborn as sns
+import matplotlib.pyplot as plt
+
+# Check for missing values
+print(train_data.isnull().sum())
+
+# Visualize missing data
+sns.heatmap(train_data.isnull(), cbar=False, cmap='viridis')
+plt.show()
+
+# Fill missing values
+train_data['Age'].fillna(train_data['Age'].median(), inplace=True)
+train_data['Embarked'].fillna(train_data['Embarked'].mode()[0], inplace=True)
+train_data.drop(columns=['Cabin'], inplace=True)
+
+# Drop the PassengerId column from train data
+train_data.drop(columns=['PassengerId'], inplace=True)
+
+# For the test data, we'll fill the missing values similarly
+test_data['Age'].fillna(test_data['Age'].median(), inplace=True)
+test_data['Fare'].fillna(test_data['Fare'].median(), inplace=True)
+test_data.drop(columns=['Cabin'], inplace=True)
+
+# Convert categorical variables into numeric
+train_data = pd.get_dummies(train_data, columns=['Sex', 'Embarked'])
+test_data = pd.get_dummies(test_data, columns=['Sex', 'Embarked'])
+
+# Ensure both datasets have the same dummy variable columns
+missing_cols = set(train_data.columns) - set(test_data.columns)
+for c in missing_cols:
+    test_data[c] = 0
+test_data = test_data[train_data.columns.drop('Survived')]
+from sklearn.model_selection import train_test_split
+from sklearn.ensemble import RandomForestClassifier
+from sklearn.metrics import accuracy_score, confusion_matrix, classification_report
+
+# Split the training data
+X = train_data.drop('Survived', axis=1)
+y = train_data['Survived']
+X_train, X_val, y_train, y_val = train_test_split(X, y, test_size=0.2, random_state=42)
+
+# Initialize and train the model
+model = RandomForestClassifier(n_estimators=100, random_state=42)
+model.fit(X_train, y_train)
+
+# Make predictions
+y_pred = model.predict(X_val)
+
+# Evaluate the model
+print("Accuracy:", accuracy_score(y_val, y_pred))
+print("Confusion Matrix:\n", confusion_matrix(y_val, y_pred))
+print("Classification Report:\n", classification_report(y_val, y_pred))
+# Make predictions on the test data
+test_preds = model.predict(test_data)
+
+# Prepare the submission file
+submission = pd.DataFrame({
+    'PassengerId': pd.read_csv('test.csv')['PassengerId'],
+    'Survived': test_preds
+})
+
+submission.to_csv('submission.csv', index=False)
