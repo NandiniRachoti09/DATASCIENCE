@@ -1,0 +1,105 @@
+Initial DataFrame:
+                                 Name    Year Duration            Genre  \
+0                                         NaN      NaN            Drama   
+1  #Gadhvi (He thought he was Gandhi)  (2019)  109 min            Drama   
+2                         #Homecoming  (2021)   90 min   Drama, Musical   
+3                             #Yaaram  (2019)  110 min  Comedy, Romance   
+4                   ...And Once Again  (2010)  105 min            Drama   
+
+   Rating Votes            Director       Actor 1             Actor 2  \
+0     NaN   NaN       J.S. Randhawa      Manmauji              Birbal   
+1     7.0     8       Gaurav Bakshi  Rasika Dugal      Vivek Ghamande   
+2     NaN   NaN  Soumyajit Majumdar  Sayani Gupta   Plabita Borthakur   
+3     4.4    35          Ovais Khan       Prateik          Ishita Raj   
+4     NaN   NaN        Amol Palekar  Rajat Kapoor  Rituparna Sengupta   
+
+           Actor 3  
+0  Rajendra Bhatia  
+1    Arvind Jangid  
+2       Roy Angana  
+3  Siddhant Kapoor  
+4      Antara Mali  
+
+DataFrame after dropping rows with missing 'Rating':
+                                 Name    Year Duration  \
+1  #Gadhvi (He thought he was Gandhi)  (2019)  109 min   
+3                             #Yaaram  (2019)  110 min   
+5                ...Aur Pyaar Ho Gaya  (1997)  147 min   
+6                           ...Yahaan  (2005)  142 min   
+8                  ?: A Question Mark  (2012)   82 min   
+
+                       Genre  Rating  Votes        Director          Actor 1  \
+1                      Drama     7.0      8   Gaurav Bakshi     Rasika Dugal   
+3            Comedy, Romance     4.4     35      Ovais Khan          Prateik   
+5     Comedy, Drama, Musical     4.7    827    Rahul Rawail       Bobby Deol   
+6        Drama, Romance, War     7.4  1,086  Shoojit Sircar  Jimmy Sheirgill   
+8  Horror, Mystery, Thriller     5.6    326   Allyson Patel        Yash Dave   
+
+                  Actor 2          Actor 3  
+1          Vivek Ghamande    Arvind Jangid  
+3              Ishita Raj  Siddhant Kapoor  
+5  Aishwarya Rai Bachchan    Shammi Kapoor  
+6          Minissha Lamba   Yashpal Sharma  
+8          Muntazir Ahmad     Kiran Bhatia  
+
+DataFrame with combined text features:
+                                            features  Rating
+1  Drama Gaurav Bakshi Rasika Dugal Vivek Ghamand...     7.0
+3  Comedy, Romance Ovais Khan Prateik Ishita Raj ...     4.4
+5  Comedy, Drama, Musical Rahul Rawail Bobby Deol...     4.7
+6  Drama, Romance, War Shoojit Sircar Jimmy Sheir...     7.4
+8  Horror, Mystery, Thriller Allyson Patel Yash D...     5.6
+<ipython-input-1-153ad440d2d4>:23: SettingWithCopyWarning: 
+A value is trying to be set on a copy of a slice from a DataFrame.
+Try using .loc[row_indexer,col_indexer] = value instead
+
+See the caveats in the documentation: https://pandas.pydata.org/pandas-docs/stable/user_guide/indexing.html#returning-a-view-versus-a-copy
+  df['Genre'] = df['Genre'].fillna('')
+<ipython-input-1-153ad440d2d4>:24: SettingWithCopyWarning: 
+A value is trying to be set on a copy of a slice from a DataFrame.
+Try using .loc[row_indexer,col_indexer] = value instead
+
+See the caveats in the documentation: https://pandas.pydata.org/pandas-docs/stable/user_guide/indexing.html#returning-a-view-versus-a-copy
+  df['Director'] = df['Director'].fillna('')
+<ipython-input-1-153ad440d2d4>:25: SettingWithCopyWarning: 
+A value is trying to be set on a copy of a slice from a DataFrame.
+Try using .loc[row_indexer,col_indexer] = value instead
+
+See the caveats in the documentation: https://pandas.pydata.org/pandas-docs/stable/user_guide/indexing.html#returning-a-view-versus-a-copy
+  df['Actor 1'] = df['Actor 1'].fillna('')
+<ipython-input-1-153ad440d2d4>:26: SettingWithCopyWarning: 
+A value is trying to be set on a copy of a slice from a DataFrame.
+Try using .loc[row_indexer,col_indexer] = value instead
+
+See the caveats in the documentation: https://pandas.pydata.org/pandas-docs/stable/user_guide/indexing.html#returning-a-view-versus-a-copy
+  df['Actor 2'] = df['Actor 2'].fillna('')
+<ipython-input-1-153ad440d2d4>:27: SettingWithCopyWarning: 
+A value is trying to be set on a copy of a slice from a DataFrame.
+Try using .loc[row_indexer,col_indexer] = value instead
+
+See the caveats in the documentation: https://pandas.pydata.org/pandas-docs/stable/user_guide/indexing.html#returning-a-view-versus-a-copy
+  df['Actor 3'] = df['Actor 3'].fillna('')
+<ipython-input-1-153ad440d2d4>:30: SettingWithCopyWarning: 
+A value is trying to be set on a copy of a slice from a DataFrame.
+Try using .loc[row_indexer,col_indexer] = value instead
+
+See the caveats in the documentation: https://pandas.pydata.org/pandas-docs/stable/user_guide/indexing.html#returning-a-view-versus-a-copy
+  df['features'] = df['Genre'] + ' ' + df['Director'] + ' ' + df['Actor 1'] + ' ' + df['Actor 2'] + ' ' + df['Actor 3']
+
+
+DataFrame after ensuring 'Rating' is numeric:
+                                            features  Rating
+1  Drama Gaurav Bakshi Rasika Dugal Vivek Ghamand...     7.0
+3  Comedy, Romance Ovais Khan Prateik Ishita Raj ...     4.4
+5  Comedy, Drama, Musical Rahul Rawail Bobby Deol...     4.7
+6  Drama, Romance, War Shoojit Sircar Jimmy Sheir...     7.4
+8  Horror, Mystery, Thriller Allyson Patel Yash D...     5.6
+
+Vectorized feature matrix shape: (7919, 7011)
+
+Training set size: (6335, 7011)
+Testing set size: (1584, 7011)
+
+Model training completed.
+
+Mean Squared Error on the test set: 6.605879424545571
