@@ -1,0 +1,95 @@
+import pandas as pd
+import matplotlib.pyplot as plt
+import seaborn as sns
+from sklearn.model_selection import train_test_split
+from sklearn.feature_extraction.text import CountVectorizer
+from sklearn.linear_model import LinearRegression
+from sklearn.metrics import mean_squared_error
+
+# Load the dataset
+df = pd.read_csv('/content/IMDb Movies India.csv', encoding='latin1')
+
+# Display the first few rows to understand the data structure
+print("Initial DataFrame:")
+print(df.head())
+
+# Step 2: Data Preprocessing
+# Drop rows with missing values in the 'Rating' column
+df = df.dropna(subset=['Rating'])
+print("\nDataFrame after dropping rows with missing 'Rating':")
+print(df.head())
+
+# Fill missing values in categorical columns with empty strings
+df['Genre'] = df['Genre'].fillna('')
+df['Director'] = df['Director'].fillna('')
+df['Actor 1'] = df['Actor 1'].fillna('')
+df['Actor 2'] = df['Actor 2'].fillna('')
+df['Actor 3'] = df['Actor 3'].fillna('')
+
+# Combine text features (genre, director, actors) into a single feature
+df['features'] = df['Genre'] + ' ' + df['Director'] + ' ' + df['Actor 1'] + ' ' + df['Actor 2'] + ' ' + df['Actor 3']
+print("\nDataFrame with combined text features:")
+print(df[['features', 'Rating']].head())
+
+# Plot the distribution of movie ratings
+plt.figure(figsize=(10, 6))
+sns.histplot(df['Rating'], bins=20, kde=True)
+plt.title('Distribution of Movie Ratings')
+plt.xlabel('Rating')
+plt.ylabel('Frequency')
+plt.show()
+
+# Define X (features) and y (target)
+X = df['features']
+y = df['Rating']
+
+# Convert y to numeric
+y = pd.to_numeric(y, errors='coerce')
+
+# Drop rows where 'Rating' could not be converted to numeric
+df = df.dropna(subset=['Rating'])
+X = df['features']
+y = df['Rating']
+print("\nDataFrame after ensuring 'Rating' is numeric:")
+print(df[['features', 'Rating']].head())
+
+# Step 5: Model Training
+# Vectorize the text features
+vectorizer = CountVectorizer()
+X_vec = vectorizer.fit_transform(X)
+print("\nVectorized feature matrix shape:", X_vec.shape)
+
+# Split the data into training and testing sets
+X_train, X_test, y_train, y_test = train_test_split(X_vec, y, test_size=0.2, random_state=42)
+print("\nTraining set size:", X_train.shape)
+print("Testing set size:", X_test.shape)
+
+# Initialize and train the regression model
+model = LinearRegression()
+model.fit(X_train, y_train)
+print("\nModel training completed.")
+
+# Step 6: Model Evaluation
+# Make predictions on the test set
+y_pred = model.predict(X_test)
+
+# Evaluate the model
+mse = mean_squared_error(y_test, y_pred)
+print("\nMean Squared Error on the test set:", mse)
+
+# Plot the predicted vs actual ratings
+
+# Plot the residuals
+residuals = y_test - y_pred
+plt.figure(figsize=(10, 6))
+sns.histplot(residuals, bins=20, kde=True)
+plt.title('Distribution of Residuals')
+plt.xlabel('Residuals')
+plt.ylabel('Frequency')
+plt.show()
+
+# Step 7: Model Fine-Tuning (if necessary)
+# You can use techniques like cross-validation and hyperparameter tuning here
+
+
+# Combine text features (genre, director, actors) into a single feature
